@@ -17,7 +17,10 @@ int main(int argc, char **argv) {
 
   SomethingClient client(protocol);
   transport->open();
-  client.ping();
+  
+  int time = client.time();
+  printf("%d", time);
+  
   transport->close();
 
   return 0;

@@ -8,7 +8,7 @@
 
 namespace Test {
 
-uint32_t Something_ping_args::read(::apache::thrift::protocol::TProtocol* iprot) {
+uint32_t Something_time_args::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   uint32_t xfer = 0;
   std::string fname;
@@ -35,25 +35,25 @@ uint32_t Something_ping_args::read(::apache::thrift::protocol::TProtocol* iprot)
   return xfer;
 }
 
-uint32_t Something_ping_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
+uint32_t Something_time_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
   uint32_t xfer = 0;
-  xfer += oprot->writeStructBegin("Something_ping_args");
+  xfer += oprot->writeStructBegin("Something_time_args");
 
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   return xfer;
 }
 
-uint32_t Something_ping_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
+uint32_t Something_time_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
   uint32_t xfer = 0;
-  xfer += oprot->writeStructBegin("Something_ping_pargs");
+  xfer += oprot->writeStructBegin("Something_time_pargs");
 
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   return xfer;
 }
 
-uint32_t Something_ping_result::read(::apache::thrift::protocol::TProtocol* iprot) {
+uint32_t Something_time_result::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   uint32_t xfer = 0;
   std::string fname;
@@ -93,11 +93,11 @@ uint32_t Something_ping_result::read(::apache::thrift::protocol::TProtocol* ipro
   return xfer;
 }
 
-uint32_t Something_ping_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
+uint32_t Something_time_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
 
   uint32_t xfer = 0;
 
-  xfer += oprot->writeStructBegin("Something_ping_result");
+  xfer += oprot->writeStructBegin("Something_time_result");
 
   if (this->__isset.success) {
     xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_I32, 0);
@@ -109,7 +109,7 @@ uint32_t Something_ping_result::write(::apache::thrift::protocol::TProtocol* opr
   return xfer;
 }
 
-uint32_t Something_ping_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
+uint32_t Something_time_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   uint32_t xfer = 0;
   std::string fname;
@@ -149,18 +149,18 @@ uint32_t Something_ping_presult::read(::apache::thrift::protocol::TProtocol* ipr
   return xfer;
 }
 
-int32_t SomethingClient::ping()
+int32_t SomethingClient::time()
 {
-  send_ping();
-  return recv_ping();
+  send_time();
+  return recv_time();
 }
 
-void SomethingClient::send_ping()
+void SomethingClient::send_time()
 {
   int32_t cseqid = 0;
-  oprot_->writeMessageBegin("ping", ::apache::thrift::protocol::T_CALL, cseqid);
+  oprot_->writeMessageBegin("time", ::apache::thrift::protocol::T_CALL, cseqid);
 
-  Something_ping_pargs args;
+  Something_time_pargs args;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -168,7 +168,7 @@ void SomethingClient::send_ping()
   oprot_->getTransport()->flush();
 }
 
-int32_t SomethingClient::recv_ping()
+int32_t SomethingClient::recv_time()
 {
 
   int32_t rseqid = 0;
@@ -188,13 +188,13 @@ int32_t SomethingClient::recv_ping()
     iprot_->readMessageEnd();
     iprot_->getTransport()->readEnd();
   }
-  if (fname.compare("ping") != 0) {
+  if (fname.compare("time") != 0) {
     iprot_->skip(::apache::thrift::protocol::T_STRUCT);
     iprot_->readMessageEnd();
     iprot_->getTransport()->readEnd();
   }
   int32_t _return;
-  Something_ping_presult result;
+  Something_time_presult result;
   result.success = &_return;
   result.read(iprot_);
   iprot_->readMessageEnd();
@@ -203,7 +203,7 @@ int32_t SomethingClient::recv_ping()
   if (result.__isset.success) {
     return _return;
   }
-  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "ping failed: unknown result");
+  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "time failed: unknown result");
 }
 
 bool SomethingProcessor::dispatchCall(::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, const std::string& fname, int32_t seqid, void* callContext) {
@@ -225,38 +225,38 @@ bool SomethingProcessor::dispatchCall(::apache::thrift::protocol::TProtocol* ipr
   return true;
 }
 
-void SomethingProcessor::process_ping(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext)
+void SomethingProcessor::process_time(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext)
 {
   void* ctx = NULL;
   if (this->eventHandler_.get() != NULL) {
-    ctx = this->eventHandler_->getContext("Something.ping", callContext);
+    ctx = this->eventHandler_->getContext("Something.time", callContext);
   }
-  ::apache::thrift::TProcessorContextFreer freer(this->eventHandler_.get(), ctx, "Something.ping");
+  ::apache::thrift::TProcessorContextFreer freer(this->eventHandler_.get(), ctx, "Something.time");
 
   if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->preRead(ctx, "Something.ping");
+    this->eventHandler_->preRead(ctx, "Something.time");
   }
 
-  Something_ping_args args;
+  Something_time_args args;
   args.read(iprot);
   iprot->readMessageEnd();
   uint32_t bytes = iprot->getTransport()->readEnd();
 
   if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->postRead(ctx, "Something.ping", bytes);
+    this->eventHandler_->postRead(ctx, "Something.time", bytes);
   }
 
-  Something_ping_result result;
+  Something_time_result result;
   try {
-    result.success = iface_->ping();
+    result.success = iface_->time();
     result.__isset.success = true;
   } catch (const std::exception& e) {
     if (this->eventHandler_.get() != NULL) {
-      this->eventHandler_->handlerError(ctx, "Something.ping");
+      this->eventHandler_->handlerError(ctx, "Something.time");
     }
 
     ::apache::thrift::TApplicationException x(e.what());
-    oprot->writeMessageBegin("ping", ::apache::thrift::protocol::T_EXCEPTION, seqid);
+    oprot->writeMessageBegin("time", ::apache::thrift::protocol::T_EXCEPTION, seqid);
     x.write(oprot);
     oprot->writeMessageEnd();
     oprot->getTransport()->writeEnd();
@@ -265,17 +265,17 @@ void SomethingProcessor::process_ping(int32_t seqid, ::apache::thrift::protocol:
   }
 
   if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->preWrite(ctx, "Something.ping");
+    this->eventHandler_->preWrite(ctx, "Something.time");
   }
 
-  oprot->writeMessageBegin("ping", ::apache::thrift::protocol::T_REPLY, seqid);
+  oprot->writeMessageBegin("time", ::apache::thrift::protocol::T_REPLY, seqid);
   result.write(oprot);
   oprot->writeMessageEnd();
   bytes = oprot->getTransport()->writeEnd();
   oprot->getTransport()->flush();
 
   if (this->eventHandler_.get() != NULL) {
-    this->eventHandler_->postWrite(ctx, "Something.ping", bytes);
+    this->eventHandler_->postWrite(ctx, "Something.time", bytes);
   }
 }
 

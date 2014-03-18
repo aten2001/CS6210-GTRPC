@@ -15,7 +15,7 @@ namespace Test {
 class SomethingIf {
  public:
   virtual ~SomethingIf() {}
-  virtual int32_t ping() = 0;
+  virtual int32_t time() = 0;
 };
 
 class SomethingIfFactory {
@@ -45,31 +45,31 @@ class SomethingIfSingletonFactory : virtual public SomethingIfFactory {
 class SomethingNull : virtual public SomethingIf {
  public:
   virtual ~SomethingNull() {}
-  int32_t ping() {
+  int32_t time() {
     int32_t _return = 0;
     return _return;
   }
 };
 
 
-class Something_ping_args {
+class Something_time_args {
  public:
 
-  Something_ping_args() {
+  Something_time_args() {
   }
 
-  virtual ~Something_ping_args() throw() {}
+  virtual ~Something_time_args() throw() {}
 
 
-  bool operator == (const Something_ping_args & /* rhs */) const
+  bool operator == (const Something_time_args & /* rhs */) const
   {
     return true;
   }
-  bool operator != (const Something_ping_args &rhs) const {
+  bool operator != (const Something_time_args &rhs) const {
     return !(*this == rhs);
   }
 
-  bool operator < (const Something_ping_args & ) const;
+  bool operator < (const Something_time_args & ) const;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
@@ -77,69 +77,69 @@ class Something_ping_args {
 };
 
 
-class Something_ping_pargs {
+class Something_time_pargs {
  public:
 
 
-  virtual ~Something_ping_pargs() throw() {}
+  virtual ~Something_time_pargs() throw() {}
 
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
 };
 
-typedef struct _Something_ping_result__isset {
-  _Something_ping_result__isset() : success(false) {}
+typedef struct _Something_time_result__isset {
+  _Something_time_result__isset() : success(false) {}
   bool success;
-} _Something_ping_result__isset;
+} _Something_time_result__isset;
 
-class Something_ping_result {
+class Something_time_result {
  public:
 
-  Something_ping_result() : success(0) {
+  Something_time_result() : success(0) {
   }
 
-  virtual ~Something_ping_result() throw() {}
+  virtual ~Something_time_result() throw() {}
 
   int32_t success;
 
-  _Something_ping_result__isset __isset;
+  _Something_time_result__isset __isset;
 
   void __set_success(const int32_t val) {
     success = val;
   }
 
-  bool operator == (const Something_ping_result & rhs) const
+  bool operator == (const Something_time_result & rhs) const
   {
     if (!(success == rhs.success))
       return false;
     return true;
   }
-  bool operator != (const Something_ping_result &rhs) const {
+  bool operator != (const Something_time_result &rhs) const {
     return !(*this == rhs);
   }
 
-  bool operator < (const Something_ping_result & ) const;
+  bool operator < (const Something_time_result & ) const;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
 };
 
-typedef struct _Something_ping_presult__isset {
-  _Something_ping_presult__isset() : success(false) {}
+typedef struct _Something_time_presult__isset {
+  _Something_time_presult__isset() : success(false) {}
   bool success;
-} _Something_ping_presult__isset;
+} _Something_time_presult__isset;
 
-class Something_ping_presult {
+class Something_time_presult {
  public:
 
 
-  virtual ~Something_ping_presult() throw() {}
+  virtual ~Something_time_presult() throw() {}
 
   int32_t* success;
 
-  _Something_ping_presult__isset __isset;
+  _Something_time_presult__isset __isset;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
 
@@ -165,9 +165,9 @@ class SomethingClient : virtual public SomethingIf {
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> getOutputProtocol() {
     return poprot_;
   }
-  int32_t ping();
-  void send_ping();
-  int32_t recv_ping();
+  int32_t time();
+  void send_time();
+  int32_t recv_time();
  protected:
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot_;
@@ -183,11 +183,11 @@ class SomethingProcessor : public ::apache::thrift::TDispatchProcessor {
   typedef  void (SomethingProcessor::*ProcessFunction)(int32_t, ::apache::thrift::protocol::TProtocol*, ::apache::thrift::protocol::TProtocol*, void*);
   typedef std::map<std::string, ProcessFunction> ProcessMap;
   ProcessMap processMap_;
-  void process_ping(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
+  void process_time(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot, void* callContext);
  public:
   SomethingProcessor(boost::shared_ptr<SomethingIf> iface) :
     iface_(iface) {
-    processMap_["ping"] = &SomethingProcessor::process_ping;
+    processMap_["time"] = &SomethingProcessor::process_time;
   }
 
   virtual ~SomethingProcessor() {}
@@ -216,13 +216,13 @@ class SomethingMultiface : virtual public SomethingIf {
     ifaces_.push_back(iface);
   }
  public:
-  int32_t ping() {
+  int32_t time() {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->ping();
+      ifaces_[i]->time();
     }
-    return ifaces_[i]->ping();
+    return ifaces_[i]->time();
   }
 
 };

@@ -22,9 +22,10 @@ class SomethingHandler : virtual public SomethingIf {
     // Your initialization goes here
   }
 
-  int32_t ping() {
+  int32_t time() {
     // Your implementation goes here
-    printf("ping\n");
+    printf("time\n");
+return 25;
   }
 
 };
