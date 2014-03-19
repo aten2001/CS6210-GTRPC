@@ -64,6 +64,13 @@ public:
 		delete[] cacheData;
 	}
 
+	//overload = operator
+	SimpleHash& operator=(int byteSize){
+		cacheBytes = byteSize;	//Set size limit
+
+		return *this;
+	}
+
 	//Add to hash table
 	void set(std::string& key, std::string& value) {
 		if (value.size()>cacheBytes){
@@ -123,7 +130,11 @@ public:
 	SimpleHash cacheTable = 1000;		//Hash table of size 1000
 
 	//Constructor
-	SomethingHandler() {}
+	SomethingHandler(int size) {
+		//Set number of bytes in cacheTable
+		cacheTable = size;
+
+	}
  	
 	//Add data to cache
 	void addToCache(std::string url, std::string curlData){
@@ -182,7 +193,7 @@ std::cout<<"out\n";
 
 int main(int argc, char **argv) {
 	int port = 9090;
-	shared_ptr<SomethingHandler> handler(new SomethingHandler());
+	shared_ptr<SomethingHandler> handler(new SomethingHandler(atoi(argv[1])));
 	shared_ptr<TProcessor> processor(new SomethingProcessor(handler));
 	shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
 	shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
