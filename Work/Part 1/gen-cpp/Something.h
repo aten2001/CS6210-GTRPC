@@ -8,14 +8,14 @@
 #define Something_H
 
 #include <thrift/TDispatchProcessor.h>
-#include "your_thrift_file_types.h"
+#include "rpc_types.h"
 
 namespace Test {
 
 class SomethingIf {
  public:
   virtual ~SomethingIf() {}
-  virtual int32_t time() = 0;
+  virtual void time(std::string& _return, const std::string& url) = 0;
 };
 
 class SomethingIfFactory {
@@ -45,24 +45,36 @@ class SomethingIfSingletonFactory : virtual public SomethingIfFactory {
 class SomethingNull : virtual public SomethingIf {
  public:
   virtual ~SomethingNull() {}
-  int32_t time() {
-    int32_t _return = 0;
-    return _return;
+  void time(std::string& /* _return */, const std::string& /* url */) {
+    return;
   }
 };
 
+typedef struct _Something_time_args__isset {
+  _Something_time_args__isset() : url(false) {}
+  bool url;
+} _Something_time_args__isset;
 
 class Something_time_args {
  public:
 
-  Something_time_args() {
+  Something_time_args() : url() {
   }
 
   virtual ~Something_time_args() throw() {}
 
+  std::string url;
 
-  bool operator == (const Something_time_args & /* rhs */) const
+  _Something_time_args__isset __isset;
+
+  void __set_url(const std::string& val) {
+    url = val;
+  }
+
+  bool operator == (const Something_time_args & rhs) const
   {
+    if (!(url == rhs.url))
+      return false;
     return true;
   }
   bool operator != (const Something_time_args &rhs) const {
@@ -83,6 +95,7 @@ class Something_time_pargs {
 
   virtual ~Something_time_pargs() throw() {}
 
+  const std::string* url;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
@@ -96,16 +109,16 @@ typedef struct _Something_time_result__isset {
 class Something_time_result {
  public:
 
-  Something_time_result() : success(0) {
+  Something_time_result() : success() {
   }
 
   virtual ~Something_time_result() throw() {}
 
-  int32_t success;
+  std::string success;
 
   _Something_time_result__isset __isset;
 
-  void __set_success(const int32_t val) {
+  void __set_success(const std::string& val) {
     success = val;
   }
 
@@ -137,7 +150,7 @@ class Something_time_presult {
 
   virtual ~Something_time_presult() throw() {}
 
-  int32_t* success;
+  std::string* success;
 
   _Something_time_presult__isset __isset;
 
@@ -165,9 +178,9 @@ class SomethingClient : virtual public SomethingIf {
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> getOutputProtocol() {
     return poprot_;
   }
-  int32_t time();
-  void send_time();
-  int32_t recv_time();
+  void time(std::string& _return, const std::string& url);
+  void send_time(const std::string& url);
+  void recv_time(std::string& _return);
  protected:
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot_;
   boost::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot_;
@@ -216,13 +229,14 @@ class SomethingMultiface : virtual public SomethingIf {
     ifaces_.push_back(iface);
   }
  public:
-  int32_t time() {
+  void time(std::string& _return, const std::string& url) {
     size_t sz = ifaces_.size();
     size_t i = 0;
     for (; i < (sz - 1); ++i) {
-      ifaces_[i]->time();
+      ifaces_[i]->time(_return, url);
     }
-    return ifaces_[i]->time();
+    ifaces_[i]->time(_return, url);
+    return;
   }
 
 };

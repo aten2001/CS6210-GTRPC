@@ -1,5 +1,5 @@
 namespace cpp Test
 
 service Something {
-  i32 time()
+  string time(string url)
 }

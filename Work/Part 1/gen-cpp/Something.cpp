@@ -26,7 +26,20 @@ uint32_t Something_time_args::read(::apache::thrift::protocol::TProtocol* iprot)
     if (ftype == ::apache::thrift::protocol::T_STOP) {
       break;
     }
-    xfer += iprot->skip(ftype);
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->url);
+          this->__isset.url = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
     xfer += iprot->readFieldEnd();
   }
 
@@ -39,6 +52,10 @@ uint32_t Something_time_args::write(::apache::thrift::protocol::TProtocol* oprot
   uint32_t xfer = 0;
   xfer += oprot->writeStructBegin("Something_time_args");
 
+  xfer += oprot->writeFieldBegin("url", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString(this->url);
+  xfer += oprot->writeFieldEnd();
+
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   return xfer;
@@ -47,6 +64,10 @@ uint32_t Something_time_args::write(::apache::thrift::protocol::TProtocol* oprot
 uint32_t Something_time_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
   uint32_t xfer = 0;
   xfer += oprot->writeStructBegin("Something_time_pargs");
+
+  xfer += oprot->writeFieldBegin("url", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString((*(this->url)));
+  xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
@@ -74,8 +95,8 @@ uint32_t Something_time_result::read(::apache::thrift::protocol::TProtocol* ipro
     switch (fid)
     {
       case 0:
-        if (ftype == ::apache::thrift::protocol::T_I32) {
-          xfer += iprot->readI32(this->success);
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->success);
           this->__isset.success = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -100,8 +121,8 @@ uint32_t Something_time_result::write(::apache::thrift::protocol::TProtocol* opr
   xfer += oprot->writeStructBegin("Something_time_result");
 
   if (this->__isset.success) {
-    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_I32, 0);
-    xfer += oprot->writeI32(this->success);
+    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRING, 0);
+    xfer += oprot->writeString(this->success);
     xfer += oprot->writeFieldEnd();
   }
   xfer += oprot->writeFieldStop();
@@ -130,8 +151,8 @@ uint32_t Something_time_presult::read(::apache::thrift::protocol::TProtocol* ipr
     switch (fid)
     {
       case 0:
-        if (ftype == ::apache::thrift::protocol::T_I32) {
-          xfer += iprot->readI32((*(this->success)));
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString((*(this->success)));
           this->__isset.success = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -149,18 +170,19 @@ uint32_t Something_time_presult::read(::apache::thrift::protocol::TProtocol* ipr
   return xfer;
 }
 
-int32_t SomethingClient::time()
+void SomethingClient::time(std::string& _return, const std::string& url)
 {
-  send_time();
-  return recv_time();
+  send_time(url);
+  recv_time(_return);
 }
 
-void SomethingClient::send_time()
+void SomethingClient::send_time(const std::string& url)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("time", ::apache::thrift::protocol::T_CALL, cseqid);
 
   Something_time_pargs args;
+  args.url = &url;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -168,7 +190,7 @@ void SomethingClient::send_time()
   oprot_->getTransport()->flush();
 }
 
-int32_t SomethingClient::recv_time()
+void SomethingClient::recv_time(std::string& _return)
 {
 
   int32_t rseqid = 0;
@@ -193,7 +215,6 @@ int32_t SomethingClient::recv_time()
     iprot_->readMessageEnd();
     iprot_->getTransport()->readEnd();
   }
-  int32_t _return;
   Something_time_presult result;
   result.success = &_return;
   result.read(iprot_);
@@ -201,7 +222,8 @@ int32_t SomethingClient::recv_time()
   iprot_->getTransport()->readEnd();
 
   if (result.__isset.success) {
-    return _return;
+    // _return pointer has now been filled
+    return;
   }
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "time failed: unknown result");
 }
@@ -248,7 +270,7 @@ void SomethingProcessor::process_time(int32_t seqid, ::apache::thrift::protocol:
 
   Something_time_result result;
   try {
-    result.success = iface_->time();
+    iface_->time(result.success, args.url);
     result.__isset.success = true;
   } catch (const std::exception& e) {
     if (this->eventHandler_.get() != NULL) {

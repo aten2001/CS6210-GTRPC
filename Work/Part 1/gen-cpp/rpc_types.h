@@ -4,8 +4,8 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-#ifndef your_thrift_file_TYPES_H
-#define your_thrift_file_TYPES_H
+#ifndef rpc_TYPES_H
+#define rpc_TYPES_H
 
 #include <thrift/Thrift.h>
 #include <thrift/TApplicationException.h>

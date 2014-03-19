@@ -1,8 +1,9 @@
 #include "Something.h"
-
+#include <curl/curl.h>
 #include <transport/TSocket.h>
 #include <transport/TBufferTransports.h>
 #include <protocol/TBinaryProtocol.h>
+#include <string.h>
 
 using namespace apache::thrift;
 using namespace apache::thrift::protocol;
@@ -17,8 +18,12 @@ int main(int argc, char **argv) {
 
   SomethingClient client(protocol);
   transport->open();
-  int time = client.time();
-  printf("%d", time);
+
+  std::string url = "www.google.com";
+  std::string data;
+  client.time(data, url);
+  std::cout<<data<<"\n";
+  
   transport->close();
 
   return 0;

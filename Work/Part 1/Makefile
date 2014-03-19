@@ -14,10 +14,10 @@ all: something_server something_client
 	$(CXX) -Wall -DHAVE_INTTYPES_H -DHAVE_NETINET_IN_H $(INC) -c $< -o $@
 
 something_server: Something_server.o $(GEN_OBJ)
-	$(CXX) $^ -o $@ -L/usr/local/lib -lthrift -lcurl
+	$(CXX) $^ -o $@ -L/usr/local/lib -lthrift 
 
 something_client: Something_client.o $(GEN_OBJ)
-	$(CXX) $^ -o $@ -L/usr/local/lib -lthrift -lcurl 
+	$(CXX) $^ -o $@ -L/usr/local/lib -lthrift 
 
 clean:
 	$(RM) *.o something_server something_client

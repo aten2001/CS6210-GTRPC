@@ -4,14 +4,21 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-#include "your_thrift_file_constants.h"
+#ifndef rpc_CONSTANTS_H
+#define rpc_CONSTANTS_H
+
+#include "rpc_types.h"
 
 namespace Test {
 
-const your_thrift_fileConstants g_your_thrift_file_constants;
+class rpcConstants {
+ public:
+  rpcConstants();
 
-your_thrift_fileConstants::your_thrift_fileConstants() {
-}
+};
+
+extern const rpcConstants g_rpc_constants;
 
 } // namespace
 
+#endif

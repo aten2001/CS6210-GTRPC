@@ -4,10 +4,14 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-#include "your_thrift_file_types.h"
-
-#include <algorithm>
+#include "rpc_constants.h"
 
 namespace Test {
 
+const rpcConstants g_rpc_constants;
+
+rpcConstants::rpcConstants() {
+}
+
 } // namespace
+
