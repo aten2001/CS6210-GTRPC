@@ -17,44 +17,133 @@ using boost::shared_ptr;
 
 using namespace  ::Test;
 
+typedef struct _cacheEntry{
+	std::string url;
+	std::string data;
+	int size;
+	int valid;
+	int timeStamp;
+} cacheEntry;
+
+
+class SimpleHash {
+private:
+    int totalSize = 0;
+    
+    // data
+    cacheEntry* cacheData;
+    
+    // hash table size
+    unsigned int cacheSize;
+    int cacheBytes = 4096*1024;
+    int timeStamp = 0;
+
+    // djb2 hash function
+    int djb2(const char* key) {
+        unsigned int hash = 5381;
+
+        for (int i = 0; i < strlen(key); i++)
+            hash = ((hash << 5) + hash) + (int)key[i];
+
+        return hash%cacheSize;
+    }
+
+public:
+    SimpleHash(unsigned int size): cacheSize(size) {
+        // init hash table data given table size
+        cacheData = new cacheEntry[cacheSize];
+    }
+
+    ~SimpleHash() {
+        delete[] cacheData;
+    }
+
+    void set(std::string& key, std::string& value) {
+        totalSize += value.size;	//add to cache
+
+	int index = djb2(key.c_str());
+
+	//Set up data in table
+        cacheData[index].url = key;
+        cacheData[index].data = value;
+        cacheData[index].size = value.size();
+        cacheData[index].valid = 1;
+        cacheData[index].timeStamp = timeStamp++;
+    }
+
+    std::string get(std::string& key) {
+	std::string returnString  = "";
+
+	//Get index in hash table
+        int index = djb2(key.c_str());
+
+	//If data entry valid, return string
+	if (cacheData[index].valid==1 && cacheData[index].size>0){
+		returnString = cacheData[index].data;
+	}
+	
+        return returnString;
+    }
+};
+
 class SomethingHandler : virtual public SomethingIf {
  public:
+ 
+ SimpleHash cacheTable = 1000;
+
   SomethingHandler() {
-    // Your initialization goes here
+  }
+ 
+  void addToCache(std::string url, std::string curlData){
+	cacheTable.set(url, curlData);
   }
 
+  std::string getFromCache(std::string url){
+	return cacheTable.get(url);
+  }
+
+  //Create string
   static size_t write_to_string(void *ptr, size_t size, size_t count, std::string *stream) {
     stream->append((char*)ptr, 0, size*count);
     return size*count;
   }
 
   void time(std::string& _return, const std::string& url) {
-    // Your implementation goes here
+    //Curl variables 
     CURL *curl;
     CURLcode res;
     std::string response;
+	
+	response=getFromCache(url);
+	if (response.empty()){
+std::cout<<"in\n";
+	    //Do curl
+	    curl = curl_easy_init();
+	    if(curl) {
+		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+		// example.com is redirected, so we tell libcurl to follow redirection
+		curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+		//Save response to string response
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_string);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 
-    curl = curl_easy_init();
-    if(curl) {
-        //std::cout<<url<<"\n";
-        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-        /* example.com is redirected, so we tell libcurl to follow redirection */ 
-        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_string);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 
+		// Perform the request, res will get the return code 
+		res = curl_easy_perform(curl);
+		// Check for errors 
+		if(res != CURLE_OK){
+		  fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+	 	}
 
-        /* Perform the request, res will get the return code */ 
-        res = curl_easy_perform(curl);
-        /* Check for errors */ 
-        if(res != CURLE_OK){
-          fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
- 	}
+		// always cleanup 
+		curl_easy_cleanup(curl);
+	    }
+    	    addToCache(url, response);
+	}
 
-        /* always cleanup */ 
-        curl_easy_cleanup(curl);
-     }
+std::cout<<"out\n";
 
+     //Return response
      _return = response;
   }
 

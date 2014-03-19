@@ -1,5 +1,5 @@
 #include "Something.h"
-
+#include <curl/curl.h>
 #include <transport/TSocket.h>
 #include <transport/TBufferTransports.h>
 #include <protocol/TBinaryProtocol.h>
@@ -22,7 +22,18 @@ int main(int argc, char **argv) {
   std::string url = "www.google.com";
   std::string data;
   client.time(data, url);
-  std::cout<<data<<"\n";
+
+  std::string url = "www.yahoo.com";
+  std::string data;
+  client.time(data, url);
+
+  std::string url = "www.google.com";
+  std::string data;
+  client.time(data, url);
+
+  std::string url = "www.yahoo.com";
+  std::string data;
+  client.time(data, url);
   
   transport->close();
 

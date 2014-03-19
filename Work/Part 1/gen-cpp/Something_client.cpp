@@ -22,7 +22,15 @@ int main(int argc, char **argv) {
   std::string url = "www.google.com";
   std::string data;
   client.time(data, url);
-  std::cout<<data<<"\n";
+
+  url = "www.yahoo.com";
+  client.time(data, url);
+
+  url = "www.google.com";
+  client.time(data, url);
+
+  url = "www.yahoo.com";
+  client.time(data, url);
   
   transport->close();
 
