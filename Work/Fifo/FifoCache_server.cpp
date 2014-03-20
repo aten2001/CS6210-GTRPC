@@ -26,6 +26,8 @@ typedef struct _cacheEntry{
 	int size;
 	int valid;
 	int timeStamp;
+	int next;
+	int prev;
 } cacheEntry;
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //Hash table structure for maintaining cache
@@ -40,6 +42,10 @@ private:
 	int cacheBytes = 170000;
 	//Next timestamp
 	int timeStamp = 0;
+	//LL variables
+	int num = 0;
+	int oldest = -1;
+	int newest = -1;
 
 	// djb2 hash function
 	int djb2(const char* key) {
@@ -82,28 +88,23 @@ public:
 
 
 		while (cacheCurBytes>cacheBytes){
-			//Reset indexing
-			int timeDelete = timeStamp + 1;
-			int indexDelete = -1;
-			
-			for(int i = 0; i<cacheLength;i++){
-				//if it holds data
-				if (cacheData[i].valid==1 && cacheData[i].size>0){
-					//If earlier timestamp, delete this one					
-					if (cacheData[i].timeStamp<timeDelete){
-
-						timeDelete = cacheData[i].timeStamp;
-						indexDelete = i;
-					}		
-				}
-			}
 			//Remove first one
-			if (cacheData[indexDelete].valid==1 && cacheData[indexDelete].size>0){
-				cacheCurBytes-=cacheData[indexDelete].size;
-				cacheData[indexDelete].url = "";
-				cacheData[indexDelete].data = "";
-				cacheData[indexDelete].size = 0;
-				cacheData[indexDelete].valid = 0;
+			if (cacheData[oldest].valid==1 && cacheData[oldest].size>0){
+				cacheCurBytes-=cacheData[oldest].size;
+				cacheData[oldest].url = "";
+				cacheData[oldest].data = "";
+				cacheData[oldest].size = 0;
+				cacheData[oldest].valid = 0;
+
+				//Fix pointers
+				if (num>1){
+					cacheData[cacheData[oldest].next].prev = -1;
+					oldest = cacheData[oldest].next;
+				}else{
+					oldest = newest = -1;
+				}
+
+				num--;
 			}
 		}
 
@@ -118,6 +119,20 @@ public:
 		cacheData[index].size = value.size();
 		cacheData[index].valid = 1;
 		cacheData[index].timeStamp = timeStamp++;
+		
+		//Fix linked list
+		if (num==0){
+			oldest = newest = index;
+			cacheData[index].next = -1;
+			cacheData[index].prev = -1;
+		}else{
+			cacheData[newest].next = index;
+			cacheData[index].prev = newest;
+			newest = index;
+		}	
+
+
+		num++;
 	}
 
 	//Pull data from hash table

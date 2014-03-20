@@ -27,6 +27,8 @@ typedef struct _cacheEntry{
 	int size;
 	int valid;
 	int timeStamp;
+	int next;
+	int prev;
 } cacheEntry;
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 //Hash table structure for maintaining cache
@@ -41,6 +43,10 @@ private:
 	int cacheBytes = 170000;
 	//Next timestamp
 	int timeStamp = 0;
+	//LL variables
+	int num = 0;
+	int oldest = -1;
+	int newest = -1;
 
 	// djb2 hash function
 	int djb2(const char* key) {
@@ -89,14 +95,35 @@ public:
 		srand(tv.tv_sec);	//seed random number
 
 		while (cacheCurBytes>cacheBytes){
+			int hashDelete = oldest;
+			
+			indexDelete = rand()%num;	//generate index to delete
+			for (int i = 0;i<indexDelete;i ++){
+				hashDelete = cacheData[hashDelete].next;
+			}
 
-			indexDelete = rand()%cacheLength;	//generate index to delete
-			if (cacheData[indexDelete].valid==1 && cacheData[indexDelete].size>0){
-				cacheCurBytes-=cacheData[indexDelete].size;
-				cacheData[indexDelete].url = "";
-				cacheData[indexDelete].data = "";
-				cacheData[indexDelete].size = 0;
-				cacheData[indexDelete].valid = 0;
+			if (cacheData[hashDelete].valid==1 && cacheData[hashDelete].size>0){
+				cacheCurBytes-=cacheData[hashDelete].size;
+				cacheData[hashDelete].url = "";
+				cacheData[hashDelete].data = "";
+				cacheData[hashDelete].size = 0;
+				cacheData[hashDelete].valid = 0;
+
+				//Fix pointers
+				if (num>1 && hashDelete == newest){
+					cacheData[cacheData[hashDelete].prev].next = -1;
+					newest = cacheData[hashDelete].prev;
+				}else if (num>1 && hashDelete == oldest){
+					cacheData[cacheData[hashDelete].next].prev = -1;
+					oldest = cacheData[hashDelete].next;
+				}else if (num>1){
+					cacheData[cacheData[hashDelete].next].prev = cacheData[hashDelete].prev;
+					cacheData[cacheData[hashDelete].prev].next = cacheData[hashDelete].next;
+				}else{
+					oldest = newest = -1;
+				}
+
+				num--;
 			}
 
 		}
@@ -112,6 +139,20 @@ public:
 		cacheData[index].size = value.size();
 		cacheData[index].valid = 1;
 		cacheData[index].timeStamp = timeStamp++;
+
+		//Fix linked list
+		if (num==0){
+			oldest = newest = index;
+			cacheData[index].next = -1;
+			cacheData[index].prev = -1;
+		}else{
+			cacheData[newest].next = index;
+			cacheData[index].prev = newest;
+			newest = index;
+		}	
+
+
+		num++;
 	}
 
 	//Pull data from hash table
@@ -122,7 +163,7 @@ public:
 		int index = djb2(key.c_str());
 
 		//If data entry valid, return string
-		if (cacheData[index].valid==1 && cacheData[index].size>0){
+		if (cacheData[index].valid==1 && cacheData[index].size>0 && (cacheData[index].url).compare(key)==0){
 			returnString = cacheData[index].data;
 			//cacheData[index].timeStamp = timeStamp++;	//change to newer timestamp - good for LRU
 		}
