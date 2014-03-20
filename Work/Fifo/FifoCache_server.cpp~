@@ -128,7 +128,7 @@ public:
 		int index = djb2(key.c_str());
 
 		//If data entry valid, return string
-		if (cacheData[index].valid==1 && cacheData[index].size>0 && (cacheData[index].url).compare(key)==0){
+		if (cacheData[index].valid==1 && cacheData[index].size>0 && (cacheData[index].url).equals(key)){
 			returnString = cacheData[index].data;
 			//cacheData[index].timeStamp = timeStamp++;	//change to newer timestamp - good for LRU
 		}
