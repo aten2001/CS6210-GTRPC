@@ -38,14 +38,14 @@ private:
 	// hash table size
 	unsigned int cacheLength;
 	//Size in bytes
-	int cacheCurBytes = 0;
-	int cacheBytes = 170000;
+	int cacheCurBytes;
+	int cacheBytes ;
 	//Next timestamp
-	int timeStamp = 0;
+	int timeStamp;
 	//LL variables
-	int num = 0;
-	int oldest = -1;
-	int newest = -1;
+	int num;
+	int oldest;
+	int newest;
 
 	// djb2 hash function
 	int djb2(const char* key) {
@@ -60,7 +60,14 @@ private:
 
 public:
 	//Constructor function
-	SimpleHash(unsigned int size): cacheLength(size) {
+	SimpleHash() {
+		cacheLength = 1000;
+		oldest = newest = -1;
+		num = 0;
+		timeStamp = 0;
+		cacheBytes = 170000;
+		cacheCurBytes = 0;
+
 		// init hash table data given table size
 		cacheData = new cacheEntry[cacheLength];
     	}
@@ -155,7 +162,7 @@ public:
 //Handler for Proxy
 class FifoCacheHandler : virtual public FifoCacheIf {
 public:
-	SimpleHash cacheTable = 1000;		//Hash table of size 1000
+	SimpleHash cacheTable;		//Hash table of size 1000
 
 	//Constructor
 	FifoCacheHandler(int size) {

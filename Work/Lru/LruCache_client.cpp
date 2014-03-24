@@ -38,7 +38,8 @@ int main(int argc, char **argv) {
 	url = "www.bing.com";
 	client.getURL(data, url);
 
-
+	url = "www.yahoo.com";
+	client.getURL(data, url);
 
 	url = "www.cnn.com";
 	client.getURL(data, url);
